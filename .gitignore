@@ -7,3 +7,5 @@
 .project
 /.gradle/
 *.jks
+target
+.factorypath

@@ -1,4 +1,6 @@
 plugins {
+  id 'maven-publish'
+  id 'application'
 }
 
 def baseJvmArgs = [
@@ -28,19 +30,20 @@ allprojects {
   }
   
   ext {
-    assertjVersion = "3.12.2"
+    assertjVersion = "3.22.0"
     fulcrumVersion = "0.36.0"
-    jacksonVersion = "2.9.9"
-    junitVersion = "4.12"
-    kafkaVersion = "2.4.0"
-    log4jVersion = "1.2.17"
-    slf4jVersion = "1.7.25"
+    jacksonVersion = "2.13.2"
+    junitVersion = "4.13.2"
+    kafkaVersion = "3.2.0"
+    log4jVersion = "2.17.2"
+    slf4jVersion = "1.7.36"
   }
   
   dependencies {
     implementation "org.slf4j:slf4j-api:${slf4jVersion}"
     implementation "org.slf4j:slf4j-log4j12:${slf4jVersion}"
-    implementation "log4j:log4j:${log4jVersion}"
+    implementation "org.apache.logging.log4j:log4j-core:${log4jVersion}"
+    compileOnly 'org.projectlombok:lombok:1.18.24'
     
     testImplementation "org.assertj:assertj-core:${assertjVersion}"
     testImplementation "junit:junit:${junitVersion}"
@@ -72,4 +75,27 @@ dependencies {
   implementation "com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:${jacksonVersion}"
   implementation "com.obsidiandynamics.fulcrum:fulcrum-worker:${fulcrumVersion}"
   implementation "org.apache.kafka:kafka-clients:${kafkaVersion}"
+}
+// the GAV of the generated POM can be set here
+// gradle generatePomFileForMavenPublication
+// gradle publishToLocalRepo
+// build/publications/maven subfolder, a file called pom-default.xml.
+publishing {
+    publications {
+        maven(MavenPublication) {          
+            pom{
+              name = 'effectivekafka'
+              groupId = 'effectivekafka'
+              artifactId = 'effectivekafka'
+              version = '1.0.0-SNAPSHOT'
+              properties = [
+                    "java.version": "11",
+                    "avro.version": "1.11.0",
+                    "kafka.version": "3.2.0",
+                    "project.build.sourceEncoding": "UTF-8"
+                ]
+            }
+            from components.java           
+        }
+    }
 }
